@@ -1,0 +1,8 @@
+agent_num : 5
+topology : random # chain, star, tree, net, mlp, random
+reverse : False
+type : Travel
+aggregate_retry_limit: 10
+aggregate_unit_num: 2
+node_in_id: -1
+node_out_id: -2

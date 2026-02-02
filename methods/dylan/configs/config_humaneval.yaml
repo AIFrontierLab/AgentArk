@@ -1,0 +1,18 @@
+# DyLAN configuration for HumanEval
+random_seed: 0
+
+num_agents: 4
+agent_roles: 
+  - "PythonAssistant"
+  - "AlgorithmDeveloper"
+  - "ComputerScientist"
+  - "Programmer"
+num_judges: 4
+judge_roles:
+  - "Tester"
+  - "Reflector"
+  - "Debugger"
+  - "QualityManager"
+num_rounds: 3
+activation: "listwise"
+qtype: "code_completion"

@@ -1,0 +1,19 @@
+# Configuration for Dylan MMLU
+
+# Global settings
+random_seed: 0  # Random seed for reproducibility
+
+# Method specific parameters
+activation: "listwise"  # Activation function: listwise, trueskill, window, or none
+type: "single_choice"   # Question type: single_choice or math_exp
+num_rounds: 3               # Number of rounds to run
+
+# Available roles for agents
+roles:
+  - "Economist"
+  - "Doctor" 
+  - "Lawyer"
+  - "Mathematician"
+  - "Psychologist"
+  - "Programmer"
+  - "Historian"

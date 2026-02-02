@@ -1,0 +1,1 @@
+from .mas_base import MAS

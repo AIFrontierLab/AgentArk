@@ -1,0 +1,14 @@
+# Configuration for Dylan_math
+
+random_seed: 0
+
+# Number of agents to use in the debate
+agents: 4
+
+# Mode: "simple" or "complex"
+# - simple: Use basic arithmetic examples
+# - complex: Use more complex math examples with step-by-step reasoning
+mode: "complex"
+
+
+

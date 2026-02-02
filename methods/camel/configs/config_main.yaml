@@ -1,0 +1,6 @@
+chat_turn_limit: 3
+assistant_role: Postdoc
+user_role: PhD Student
+with_critic: True
+option_num: 1
+critic_role: Professor
