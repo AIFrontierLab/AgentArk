@@ -1,5 +1,6 @@
 # AgentArk
 
+Code for paper [AgentArk: Distilling Multi-Agent Intelligence into a Single LLM Agent](https://arxiv.org/abs/2602.03955).
 
 ## Table of Contents
 
