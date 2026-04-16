@@ -15,6 +15,24 @@ MODEL_MAX_PROMPT_TOKENS = {
 }
 
 
+def load_dataset_with_fallbacks(dataset_candidates, split, **kwargs):
+    """
+    Try loading a dataset from a list of candidate hub IDs/names.
+    Returns (dataset, chosen_name).
+    """
+    errors = []
+    for dataset_name in dataset_candidates:
+        try:
+            return load_dataset(dataset_name, split=split, **kwargs), dataset_name
+        except Exception as e:
+            errors.append(f"{dataset_name}: {e}")
+    joined = "\n".join(errors)
+    raise RuntimeError(
+        "Failed to load dataset from HuggingFace with all candidates:\n"
+        f"{joined}"
+    )
+
+
 def get_max_prompt_tokens_for_model(model_name_or_path, default=40960):
     """Get max prompt tokens based on model name."""
     return MODEL_MAX_PROMPT_TOKENS.get(model_name_or_path, default)
@@ -79,7 +97,9 @@ def build_dataset(args, tokenizer=None):
         
         formatted_samples_general_queries = "\n\n".join([f"Sample Question: {sample['query']}\nSample Answer: {sample['answer']}" for sample in samples_general_queries])
         formatted_samples_specific_queries = "\n\n".join([f"Sample Question: {sample['query']}\nSample Answer: {sample['answer']}" for sample in samples_specific_queries])
-        dataset = load_dataset(args.dataset_name, split=args.split)
+        dataset_candidates = ["ioeddk/qmsum", "QMSum", "qmsum"]
+        dataset, chosen_name = load_dataset_with_fallbacks(dataset_candidates, split=args.split)
+        print(f"Loaded {args.dataset_name} from HuggingFace dataset: {chosen_name}")
         
         for entry in tqdm(dataset, desc="Building prompts"):
 
