@@ -101,7 +101,11 @@ if __name__ == "__main__":
         print(f">> Method: {args.method_name} | Dataset: {args.test_dataset_name}")
 
         # load dataset
-        dataset_path = Path(args.test_dataset_path) if args.test_dataset_path is not None else Path("./datasets/data") / f"{args.test_dataset_name}.json"
+        dataset_path = (
+            Path(args.test_dataset_path).expanduser()
+            if args.test_dataset_path is not None
+            else Path("./datasets/data") / f"{args.test_dataset_name}.json"
+        )
         if not dataset_path.exists():
             can_auto_build = args.test_dataset_path is None and args.test_dataset_name in {"QMSum", "QASPER", "HotpotQA"}
             if can_auto_build:
@@ -127,14 +131,6 @@ if __name__ == "__main__":
                     "2) Pass --test_dataset_path /path/to/your_dataset.json\n"
                     "3) Use a different --test_dataset_name that has a matching JSON file."
                 )
-            raise FileNotFoundError(
-                f"Dataset file not found: {dataset_path}\n"
-                f"Expected default path: ./datasets/data/{args.test_dataset_name}.json\n"
-                "Fix options:\n"
-                "1) Put the dataset file at the default path.\n"
-                "2) Pass --test_dataset_path /path/to/your_dataset.json\n"
-                "3) Use a different --test_dataset_name that has a matching JSON file."
-            )
 
         with open(dataset_path, "r") as f:
             test_dataset = json.load(f)
