@@ -93,6 +93,7 @@ python inference.py \
 | `--method_name` | Multi-agent method to use | Required |
 | `--test_dataset_name` | Dataset for evaluation | Required |
 | `--test_dataset_path` | Optional local JSON path for test dataset; overrides name-based lookup | None |
+| `--test_dataset_split` | Split used for auto-building supported datasets when local JSON is missing | `test` |
 | `--model_name` | HuggingFace model or local path | Required |
 | `--model_temperature` | Sampling temperature | 0.5 |
 | `--model_max_tokens` | Maximum tokens per generation | 4096 |
