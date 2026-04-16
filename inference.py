@@ -127,6 +127,14 @@ if __name__ == "__main__":
                     "2) Pass --test_dataset_path /path/to/your_dataset.json\n"
                     "3) Use a different --test_dataset_name that has a matching JSON file."
                 )
+            raise FileNotFoundError(
+                f"Dataset file not found: {dataset_path}\n"
+                f"Expected default path: ./datasets/data/{args.test_dataset_name}.json\n"
+                "Fix options:\n"
+                "1) Put the dataset file at the default path.\n"
+                "2) Pass --test_dataset_path /path/to/your_dataset.json\n"
+                "3) Use a different --test_dataset_name that has a matching JSON file."
+            )
 
         with open(dataset_path, "r") as f:
             test_dataset = json.load(f)
