@@ -3,12 +3,14 @@ import json
 import argparse
 import threading
 import concurrent.futures
+from types import SimpleNamespace
 from tqdm import tqdm
 import traceback
 from pathlib import Path
 import asyncio
 from methods import get_method_class
 from utils import reserve_unprocessed_queries, load_model_api_config, write_to_jsonl
+from utils.model_utils import build_dataset
 import time
 
 
@@ -45,6 +47,18 @@ if __name__ == "__main__":
     
     # args related to dataset
     parser.add_argument("--test_dataset_name", type=str, default="MATH", help="The dataset to be used for testing.")
+    parser.add_argument(
+        "--test_dataset_path",
+        type=str,
+        default=None,
+        help="Optional explicit path to test dataset JSON file. Overrides --test_dataset_name lookup.",
+    )
+    parser.add_argument(
+        "--test_dataset_split",
+        type=str,
+        default="test",
+        help="Dataset split used when auto-building supported datasets (QMSum, QASPER, HotpotQA).",
+    )
     parser.add_argument("--output_path", type=str, default=None, help="Path to the output file.")
     parser.add_argument("--result_dir", type=str, default="results", help="Path to the results directory.")
     parser.add_argument("--require_val", action="store_true")
@@ -87,12 +101,39 @@ if __name__ == "__main__":
         print(f">> Method: {args.method_name} | Dataset: {args.test_dataset_name}")
 
         # load dataset
-        with open(f"./datasets/data/{args.test_dataset_name}.json", "r") as f:
+        dataset_path = Path(args.test_dataset_path) if args.test_dataset_path is not None else Path("./datasets/data") / f"{args.test_dataset_name}.json"
+        if not dataset_path.exists():
+            can_auto_build = args.test_dataset_path is None and args.test_dataset_name in {"QMSum", "QASPER", "HotpotQA"}
+            if can_auto_build:
+                print(f"Dataset not found at {dataset_path}. Auto-building {args.test_dataset_name} ({args.test_dataset_split}) from HuggingFace...")
+                dataset_args = SimpleNamespace(
+                    dataset_name=args.test_dataset_name,
+                    split=args.test_dataset_split,
+                    max_prompt_tokens=40960,
+                    model_name_or_path=args.model_name,
+                )
+                test_dataset = build_dataset(dataset_args)
+                dataset_path.parent.mkdir(parents=True, exist_ok=True)
+                with open(dataset_path, "w") as f:
+                    json.dump(test_dataset, f, ensure_ascii=False)
+                print(f"Saved auto-built dataset to {dataset_path} ({len(test_dataset)} samples)")
+
+            if not dataset_path.exists():
+                raise FileNotFoundError(
+                    f"Dataset file not found: {dataset_path}\n"
+                    f"Expected default path: ./datasets/data/{args.test_dataset_name}.json\n"
+                    "Fix options:\n"
+                    "1) Put the dataset file at the default path.\n"
+                    "2) Pass --test_dataset_path /path/to/your_dataset.json\n"
+                    "3) Use a different --test_dataset_name that has a matching JSON file."
+                )
+
+        with open(dataset_path, "r") as f:
             test_dataset = json.load(f)
         
         if args.require_val:
-            val_dataset_path = f"./datasets/data/{args.test_dataset_name}_val.json"
-            if not os.path.exists(val_dataset_path):
+            val_dataset_path = dataset_path.parent / f"{args.test_dataset_name}_val.json"
+            if not val_dataset_path.exists():
                 raise FileNotFoundError(f"Validation dataset not found at {val_dataset_path}. Please provide a valid path.")
             with open(val_dataset_path, "r") as f:
                 val_dataset = json.load(f)
