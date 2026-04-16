@@ -45,6 +45,12 @@ if __name__ == "__main__":
     
     # args related to dataset
     parser.add_argument("--test_dataset_name", type=str, default="MATH", help="The dataset to be used for testing.")
+    parser.add_argument(
+        "--test_dataset_path",
+        type=str,
+        default=None,
+        help="Optional explicit path to test dataset JSON file. Overrides --test_dataset_name lookup.",
+    )
     parser.add_argument("--output_path", type=str, default=None, help="Path to the output file.")
     parser.add_argument("--result_dir", type=str, default="results", help="Path to the results directory.")
     parser.add_argument("--require_val", action="store_true")
@@ -87,12 +93,23 @@ if __name__ == "__main__":
         print(f">> Method: {args.method_name} | Dataset: {args.test_dataset_name}")
 
         # load dataset
-        with open(f"./datasets/data/{args.test_dataset_name}.json", "r") as f:
+        dataset_path = Path(args.test_dataset_path) if args.test_dataset_path is not None else Path("./datasets/data") / f"{args.test_dataset_name}.json"
+        if not dataset_path.exists():
+            raise FileNotFoundError(
+                f"Dataset file not found: {dataset_path}\n"
+                f"Expected default path: ./datasets/data/{args.test_dataset_name}.json\n"
+                "Fix options:\n"
+                "1) Put the dataset file at the default path.\n"
+                "2) Pass --test_dataset_path /path/to/your_dataset.json\n"
+                "3) Use a different --test_dataset_name that has a matching JSON file."
+            )
+
+        with open(dataset_path, "r") as f:
             test_dataset = json.load(f)
         
         if args.require_val:
-            val_dataset_path = f"./datasets/data/{args.test_dataset_name}_val.json"
-            if not os.path.exists(val_dataset_path):
+            val_dataset_path = dataset_path.parent / f"{args.test_dataset_name}_val.json"
+            if not val_dataset_path.exists():
                 raise FileNotFoundError(f"Validation dataset not found at {val_dataset_path}. Please provide a valid path.")
             with open(val_dataset_path, "r") as f:
                 val_dataset = json.load(f)
