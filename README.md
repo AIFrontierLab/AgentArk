@@ -52,6 +52,39 @@ pip install -r requirements.txt
 | Evaluation | `rouge_score`, `bert_score`, `sympy` |
 | Utilities | `datasets`, `accelerate`, `peft`, `wandb` |
 
+### macOS Setup (API-Backed Inference Only)
+
+macOS has no CUDA, so `flash-attn`, `vllm`, `bitsandbytes`, and `deepspeed` cannot be installed. Training and the vLLM-based eval scripts will not run on Mac. However, `inference.py` works end-to-end on Mac when pointed at an OpenAI-compatible endpoint (e.g., a local Ollama server).
+
+**Step-by-step:**
+
+```bash
+# 1. Install Ollama and pull the smallest Qwen3 model (~500 MB)
+brew install ollama
+ollama serve &
+ollama pull qwen3:0.6b
+
+# 2. Create the conda env
+conda create -n agentark python=3.12 -y
+conda activate agentark
+
+# 3. From the repo root, install Mac-compatible deps
+pip install -r requirements-macos.txt
+
+# 4. Create the model API config from the template (gitignored, so set it up locally)
+cp model_api_configs/model_api_config.example.json model_api_configs/model_api_config.json
+
+# 5. Smoke test
+python inference.py --method_name vanilla --model_name qwen3:0.6b \
+    --test_dataset_name MATH --debug
+
+# 6. Run a real multi-agent method
+python inference.py --method_name llm_debate --model_name qwen3:0.6b \
+    --test_dataset_name MATH --debug
+```
+
+To use a different backend (OpenAI, Together, LM Studio, etc.), edit `model_api_configs/model_api_config.json` — the top-level key must match `--model_name`, and `model_url` must point at a `/v1/chat/completions`-style endpoint.
+
 ## Quick Start
 
 ```bash

@@ -1,0 +1,12 @@
+{
+    "qwen3:0.6b": {
+        "max_workers_per_model": 4,
+        "model_list": [
+            {
+                "model_name": "qwen3:0.6b",
+                "model_url": "http://localhost:11434/v1/chat/completions",
+                "api_key": "ollama"
+            }
+        ]
+    }
+}
