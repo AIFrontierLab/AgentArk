@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="AgentArk: Distilling Multi-Agent Intelligence into a Single LLM Agent.">
+  <meta name="keywords" content="AgentArk, Multi-Agent Systems, LLM Distillation, Process Reward Model, Reasoning, GRPO, Multi-Agent Debate">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AgentArk: Distilling Multi-Agent Intelligence into a Single LLM Agent</title>
+
+  <meta property="og:title" content="AgentArk: Distilling Multi-Agent Intelligence into a Single LLM Agent">
+  <meta property="og:description" content="A framework that distills multi-agent debate dynamics into a single LLM, lifting single-agent reasoning by +4.8% on average across 120 experiments.">
+  <meta property="og:type" content="website">
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans:400,500,600,700|Noto+Sans:400,500,600,700|JetBrains+Mono:400,500"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./media/static/css/bulma.min.css">
+  <link rel="stylesheet" href="./media/static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./media/static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./media/static/css/index.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%B8%3C/text%3E%3C/svg%3E">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="./media/static/js/bulma-carousel.min.js"></script>
+  <script src="./media/static/js/bulma-slider.min.js"></script>
+  <script defer src="./media/static/js/index.js"></script>
+</head>
+<body id="top">
+
+<!-- ============================ STICKY NAV ============================ -->
+<nav class="topnav" aria-label="Page sections">
+  <div class="nav-inner">
+    <a href="#top" class="brand">
+      <span class="brand-emoji" aria-hidden="true">🛸</span>
+      <span class="brand-name">AgentArk</span>
+    </a>
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="links">
+      <a href="#abstract">Abstract</a>
+      <a href="#method">Method</a>
+      <a href="#results">Results</a>
+      <a href="#findings">Findings</a>
+      <a href="#analysis">Analysis</a>
+      <a href="#bibtex">BibTeX</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============================ HERO ============================ -->
+<header class="hero-section">
+  <div class="hero-inner">
+    <!-- <div class="venue-badge">
+      <span class="dot"></span>
+      <span>NeurIPS 2026</span>
+    </div> -->
+
+    <div class="title-row">
+      <span class="title-emoji" aria-hidden="true">🛸</span>
+      <h1 class="paper-title">
+        <span class="accent">AgentArk:</span> Distilling Multi-Agent Intelligence<br>into a Single LLM Agent
+      </h1>
+    </div>
+
+    <div class="author-list">
+      <span class="author-chip"><a href="https://www.linkedin.com/in/yinyi-luo-5b0805324">Yinyi Luo</a><sup>1</sup></span>
+      <span class="author-chip"><a href="https://ahren09.github.io/">Yiqiao Jin</a><sup>3</sup></span>
+      <span class="author-chip"><a href="https://weichen-yu.github.io/">Weichen Yu</a><sup>1</sup></span>
+      <span class="author-chip"><a href="https://scholar.google.com/citations?user=h7HjebkAAAAJ">Mengqi Zhang</a><sup>2</sup></span>
+      <span class="author-chip"><a href="https://faculty.cc.gatech.edu/~srijan/">Srijan Kumar</a><sup>3</sup></span>
+      <span class="author-chip"><a href="https://xxlya.github.io/">Xiaoxiao Li</a><sup>5</sup></span>
+      <span class="author-chip"><a href="https://www.linkedin.com/in/weijie-xu-936b23101/">Weijie Xu</a><sup>4</sup><span class="corr">*</span></span>
+      <span class="author-chip">Xin Chen<sup>4</sup></span>
+      <span class="author-chip"><a href="https://jd92.wang/">Jindong Wang</a><sup>2</sup><span class="corr">*</span></span>
+    </div>
+
+    <div class="affiliations">
+      <span><sup>1</sup>Carnegie Mellon University</span>
+      <span><sup>2</sup>William &amp; Mary</span>
+      <span><sup>3</sup>Georgia Institute of Technology</span>
+      <span><sup>4</sup>Amazon</span>
+      <span><sup>5</sup>University of British Columbia</span>
+    </div>
+
+    <div class="corr-note"><span class="corr">*</span> Corresponding authors</div>
+
+    <div class="cta-row">
+      <a href="https://arxiv.org/abs/2602.03955" class="cta cta-paper" target="_blank" rel="noopener">
+        <i class="ai ai-arxiv"></i><span>arXiv</span>
+      </a>
+      <a href="./media/AgentArk_Poster.pdf" class="cta cta-poster" target="_blank" rel="noopener">
+        <i class="fas fa-image"></i><span>Poster</span>
+      </a>
+      <a href="https://github.com/AIFrontierLab/AgentArk" class="cta cta-code" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i><span>Code</span>
+      </a>
+      <a href="#bibtex" class="cta cta-outline">
+        <i class="fas fa-quote-right"></i><span>BibTeX</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ============================ HEADLINE METRICS ============================ -->
+<div class="metric-strip">
+  <div class="metric-strip-grid reveal">
+    <div class="metric-cell">
+      <span class="num">+4.8%</span>
+      <span class="label">Avg. accuracy lift over single-agent baseline</span>
+    </div>
+    <div class="metric-cell tone-teal">
+      <span class="num">120</span>
+      <span class="label">Experiments across Qwen3, Gemma 3, Llama 3</span>
+    </div>
+    <div class="metric-cell tone-warm">
+      <span class="num">3</span>
+      <span class="label">Distillation strategies: R-SFT &middot; DA &middot; PAD</span>
+    </div>
+    <div class="metric-cell tone-rose">
+      <span class="num">~342K</span>
+      <span class="label">Distillation questions, ~2M reasoning trajectories</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ ABSTRACT ============================ -->
+<section class="section" id="abstract">
+  <div class="container is-max-desktop">
+    <div class="section-head reveal">
+      <div class="section-eyebrow">01 &middot; Overview</div>
+      <h2 class="section-title">Abstract</h2>
+    </div>
+    <div class="abstract-card reveal">
+      <p>
+        While large language model (LLM) multi-agent systems achieve superior reasoning performance through iterative debate, practical deployment is limited by their high computational cost and error propagation. This paper proposes <strong>AgentArk</strong>, a novel framework to distill multi-agent dynamics into the weights of a <em>single</em> model, effectively transforming explicit test-time interactions into implicit model capabilities. This equips a single agent with the intelligence of multi-agent systems while remaining computationally efficient. Specifically, we investigate three hierarchical distillation strategies across various models, tasks, scaling, and scenarios: reasoning-enhanced fine-tuning; trajectory-based augmentation; and process-aware distillation. By shifting the burden of computation from inference to training, the distilled models preserve the efficiency of one agent while exhibiting strong reasoning and self-correction performance of multiple agents. They further demonstrate enhanced robustness and generalization across diverse reasoning tasks. We hope this work can shed light on future research on efficient and robust multi-agent development. Our code is at
+        <a href="https://github.com/AIFrontierLab/AgentArk">github.com/AIFrontierLab/AgentArk</a>.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TEASER ============================ -->
+<section class="section alt-bg">
+  <div class="container is-max-desktop">
+    <div class="section-head reveal">
+      <div class="section-eyebrow">02 &middot; Motivation</div>
+      <h2 class="section-title">From a debating crowd to a single thinker</h2>
+      <p class="section-lead">
+        Multi-agent debate produces strong reasoning but is slow and brittle. AgentArk compresses the dynamics of an agent ensemble into the weights of one model &mdash; preserving the collective behavior at single-agent inference cost.
+      </p>
+    </div>
+    <div class="fig-full reveal">
+      <img src="./media/figures/teaser.png" alt="AgentArk teaser: distilling multi-agent reasoning into a single agent">
+      <p class="caption">
+        AgentArk distills the reasoning capability of a multi-agent system into a single agent, so that one unit imitates the collective thinking process with boosted performance and a fraction of the inference cost.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ KEY CONTRIBUTIONS ============================ -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="section-head reveal">
+      <div class="section-eyebrow">03 &middot; Contributions</div>
+      <h2 class="section-title">What AgentArk delivers</h2>
+    </div>
+    <div class="grid-3 reveal">
+      <div class="feature-card">
+        <span class="feature-icon-wrap"><i class="fas fa-compass"></i></span>
+        <h4>First MAS-distillation study</h4>
+        <p>To our knowledge, the first comprehensive framework that explores and compares multiple strategies for distilling multi-agent reasoning into a single model.</p>
+      </div>
+      <div class="feature-card tone-teal">
+        <span class="feature-icon-wrap"><i class="fas fa-cubes"></i></span>
+        <h4>Scalable, MAS-agnostic pipeline</h4>
+        <p>A reusable data-generation and distillation pipeline that is agnostic to the underlying MAS algorithm, enabling research on any interaction protocol.</p>
+      </div>
+      <div class="feature-card tone-warm">
+        <span class="feature-icon-wrap"><i class="fas fa-chart-line"></i></span>
+        <h4>Extensive empirical evaluation</h4>
+        <p>120 experiments across Qwen3, Gemma 3, and Llama 3 families, covering math, medical QA, long-form QA, scaling, robustness, and multimodal transfer.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FRAMEWORK ============================ -->
+<section class="section alt-bg" id="method">
+  <div class="container is-max-desktop">
+    <div class="section-head reveal">
+      <div class="section-eyebrow">04 &middot; Framework</div>
+      <h2 class="section-title">The AgentArk pipeline</h2>
+      <p class="section-lead">
+        Three stages: <strong>multi-agent debate</strong> &rarr; <strong>knowledge extraction</strong> &rarr; <strong>hierarchical distillation</strong>.
+      </p>
+    </div>
+    <div class="fig-full reveal">
+      <img src="./media/figures/pipeline.png" alt="AgentArk pipeline: multi-agent debate, knowledge extraction, and three distillation strategies">
+      <p class="caption">
+        The pipeline proceeds through (1) multi-agent debate that produces diverse reasoning trajectories, (2) knowledge extraction that filters corrective traces with a high-capacity verifier (Qwen2.5-72B), and (3) three distillation routes: reasoning-enhanced SFT, trajectory-based data augmentation, and process-aware distillation with a PRM and GRPO.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ THREE DISTILLATION STRATEGIES ============================ -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="section-head reveal">
+      <div class="section-eyebrow">05 &middot; Strategies</div>
+      <h2 class="section-title">Three distillation strategies</h2>
+    </div>
+
+    <div class="reveal">
+      <div class="methodology-step">
+        <h4><span class="tag-label">R-SFT</span>Reasoning-Enhanced Supervised Fine-Tuning</h4>
+        <p>Supervise the student on both the final consensus answer <em>and</em> the reasoning trace that produced it. A reasoning loss trains coherent intermediate rationales, while an answer loss grounds the final prediction in those rationales.</p>
+      </div>
+
+      <div class="methodology-step tone-teal">
+        <h4><span class="tag-label">DA</span>Distillation with Trajectory Augmentation</h4>
+        <p>For every problem, extract multiple answer-consistent but structurally <em>diverse</em> reasoning chains from the debate log. The student learns several valid paths to the same answer, improving robustness and generalization.</p>
+      </div>
+
+      <div class="methodology-step tone-warm">
+        <h4><span class="tag-label">PAD</span>Process-Aware Distillation (PRM + GRPO)</h4>
+        <p>Train a Process Reward Model with a contrastive step-level objective, then fine-tune the student with Group Relative Policy Optimization. This internalizes the dialectical critique-and-revision behavior of multi-agent debate within a single forward pass.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ MAIN RESULTS ============================ -->
+<section class="section alt-bg" id="results">
+  <div class="container is-max-desktop">
+    <div class="section-head reveal">
+      <div class="section-eyebrow">06 &middot; Results</div>
+      <h2 class="section-title">Single-agent performance, multi-agent quality</h2>
+      <p class="section-lead">
+        Distilling Qwen3-32B into smaller students across GSM8K, MATH, MetaMathQA, and MedMCQA, AgentArk lifts single-agent accuracy by <strong>+4.8% on average</strong> &mdash; only marginally below a full multi-agent system, at a small fraction of the inference cost.
+      </p>
+    </div>
+
+    <div class="grid-2 reveal" style="margin-bottom: 1.5rem;">
+      <div class="fig-card">
+        <img src="./media/figures/effectiveness_id-ood.png" alt="Performance on in-domain and OOD datasets">
+        <div class="caption">In-domain (left) vs. OOD (right). Gains are larger ID; PAD transfers most reliably to OOD.</div>
+      </div>
+      <div class="fig-card">
+        <img src="./media/figures/target_model_dataset.png" alt="Performance across datasets and student models">
+        <div class="caption">Effects vary by dataset and student; reasoning-heavy benchmarks (MetaMathQA, GSM8K) benefit most.</div>
+      </div>
+    </div>
+
+    <div class="grid-3 reveal">
+      <div class="feature-card">
+        <span class="feature-icon-wrap"><i class="fas fa-check-double"></i></span>
+        <h4>PAD is most consistent</h4>
+        <p>R-SFT and DA sometimes help but swing by dataset. PAD's step-level supervision delivers stable gains across settings.</p>
+      </div>
+      <div class="feature-card tone-teal">
+        <span class="feature-icon-wrap"><i class="fas fa-network-wired"></i></span>
+        <h4>Cross-family helps more</h4>
+        <p>Distilling across families (Qwen &rarr; Gemma / Llama) yields larger and more consistent gains than same-family distillation.</p>
+      </div>
+      <div class="feature-card tone-warm">
+        <span class="feature-icon-wrap"><i class="fas fa-brain"></i></span>
+        <h4>Reasoning-heavy tasks win</h4>
+        <p>Biggest lifts on MetaMathQA and GSM8K; smaller on knowledge-heavy MedMCQA &mdash; distillation transfers reasoning, not facts.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ KEY FINDINGS ============================ -->
+<section class="section" id="findings">
+  <div class="container is-max-desktop">
+    <div class="section-head reveal">
+      <div class="section-eyebrow">07 &middot; Findings</div>
+      <h2 class="section-title">Six findings from 120 experiments</h2>
+    </div>
+
+    <div class="findings-grid reveal">
+      <div class="finding-card">
+        <span class="num-badge">F1</span>
+        <span class="finding-title">A single agent can acquire multi-agent reasoning.</span>
+        <p>All three reasoning-centric distillation methods boost single-agent performance, and combining them yields further gains.</p>
+      </div>
+
+      <div class="finding-card">
+        <span class="num-badge">F2</span>
+        <span class="finding-title">PRM capacity matters more than student size.</span>
+        <p>Strong PRMs lift even small students; weak PRMs limit everyone. Scaling teacher agents mostly helps larger students, with diminishing returns on small ones.</p>
+      </div>
+
+      <div class="finding-card">
+        <span class="num-badge">F3</span>
+        <span class="finding-title">Reasoning quality outweighs quantity.</span>
+        <p>Simply adding more trajectories does not improve performance; PAD's high-signal process supervision yields stable, consistent gains.</p>
+      </div>
+
+      <div class="finding-card">
+        <span class="num-badge">F4</span>
+        <span class="finding-title">PAD improves reasoning <em>behavior</em>, not just accuracy.</span>
+        <p>PAD-distilled models show better step decomposition, intermediate self-checking, and error correction than R-SFT and DA.</p>
+      </div>
+
+      <div class="finding-card">
+        <span class="num-badge">F5</span>
+        <span class="finding-title">Generalization &amp; robustness improve.</span>
+        <p>Distilled models transfer reliably to unseen reasoning benchmarks (HotpotQA, QASPER, QMSum) and robustness evaluations such as TruthfulQA.</p>
+      </div>
+
+      <div class="finding-card">
+        <span class="num-badge">F6</span>
+        <span class="finding-title">AgentArk extends to multimodal LLMs.</span>
+        <p>Despite training on text-only reasoning data, the distilled behaviors transfer to Qwen2.5-VL, suggesting modality-agnostic reasoning transfer.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ SCALING & DATA DYNAMICS ============================ -->
+<section class="section alt-bg" id="analysis">
+  <div class="container is-max-desktop">
+    <div class="section-head reveal">
+      <div class="section-eyebrow">08 &middot; Scaling</div>
+      <h2 class="section-title">Scaling &amp; data dynamics</h2>
+    </div>
+
+    <div class="highlight-box reveal">
+      <h4>Reasoning quality beats data volume.</h4>
+      <p>Bigger teacher ensembles mainly help larger students; for smaller ones, high-signal process supervision matters more than raw trajectory count.</p>
+    </div>
+
+    <h3 class="subsection-title reveal">Scaling the number of <span class="accent">debating agents</span></h3>
+    <div class="grid-2 reveal">
+      <div class="fig-card">
+        <img src="./media/figures/agent_scale_0.6B.png" alt="Effect of agent scale on 0.6B student">
+        <div class="caption">Qwen3-0.6B saturates around 5 agents; more agents can hurt due to limited capacity.</div>
+      </div>
+      <div class="fig-card">
+        <img src="./media/figures/agent_scale_8B.png" alt="Effect of agent scale on 8B student">
+        <div class="caption">Qwen3-8B benefits from 5 &rarr; 10 &rarr; 20 agents, with diminishing returns.</div>
+      </div>
+    </div>
+
+    <h3 class="subsection-title reveal">Data <span class="accent">quantity vs. quality</span></h3>
+    <div class="grid-2 reveal">
+      <div class="fig-card">
+        <img src="./media/figures/data_scale_0.6B_gsm8k.png" alt="Data scaling on GSM8K">
+        <div class="caption">GSM8K: R-SFT and DA fluctuate with scale; PAD remains stable.</div>
+      </div>
+      <div class="fig-card">
+        <img src="./media/figures/data_scale_0.6B_meta.png" alt="Data scaling on MetaMathQA">
+        <div class="caption">MetaMathQA: PAD preserves high-signal trajectories instead of overwhelming the student.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ REASONING QUALITY ============================ -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="section-head reveal">
+      <div class="section-eyebrow">09 &middot; Quality</div>
+      <h2 class="section-title">How distilled models actually reason</h2>
+      <p class="section-lead">
+        Reasoning-token perplexity on held-out GSM8K drops substantially after distillation, indicating more structured chains of thought. An LLM-judge evaluation (InternLM-2.5-20B-Chat) scores models on step decomposition, intermediate verification, error localization, and overall coherence.
+      </p>
+    </div>
+
+    <div class="reveal">
+      <div class="methodology-step tone-warm">
+        <h4><span class="tag-label">PAD</span>Best on all four reasoning-quality dimensions</h4>
+        <p>PAD preserves explicit multi-step structure, self-checking behavior, and coherent reasoning flows, outperforming the base and both SFT variants.</p>
+      </div>
+      <div class="methodology-step tone-teal">
+        <h4><span class="tag-label">DA</span>Moderate gains on verification &amp; error localization</h4>
+        <p>DA captures surface-level reasoning structure but does not fully inherit reflective self-correction behavior.</p>
+      </div>
+      <div class="methodology-step">
+        <h4><span class="tag-label">R-SFT</span>Smaller, less consistent improvement</h4>
+        <p>Direct reasoning-level supervision alone is insufficient &mdash; it improves fluency but not the dialectical dynamics of MAS.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ ROBUSTNESS & GENERALIZATION ============================ -->
+<section class="section alt-bg">
+  <div class="container is-max-desktop">
+    <div class="section-head reveal">
+      <div class="section-eyebrow">10 &middot; Generalization</div>
+      <h2 class="section-title">Robustness &amp; cross-domain transfer</h2>
+      <p class="section-lead">
+        Students trained only on GSM8K transfer to HotpotQA (multi-hop QA), QASPER (long-context understanding), and QMSum (summarization) &mdash; tasks far from the training distribution.
+      </p>
+    </div>
+
+    <div class="fig-full reveal">
+      <img src="./media/figures/generalizability_f1-score.png" alt="Open-ended generalization F1 scores on HotpotQA, QASPER, and QMSum" style="max-width: 88%;">
+      <p class="caption">
+        F1 on three open-ended OOD benchmarks. AgentArk boosts cross-domain reasoning transfer, especially for larger students &mdash; distillation strengthens general reasoning rather than fitting dataset patterns.
+      </p>
+    </div>
+
+    <div class="highlight-box reveal">
+      <h4>Distilled behaviors survive distribution shift.</h4>
+      <p>On TruthfulQA, all three distillation variants improve factual robustness over the base student, with PAD ranking highest &mdash; evidence that MAS distillation transfers reasoning behavior, not surface alignment.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ MULTIMODAL ============================ -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="section-head reveal">
+      <div class="section-eyebrow">11 &middot; Multimodal</div>
+      <h2 class="section-title">Extension to multimodal LLMs</h2>
+      <p class="section-lead">
+        Although training data is entirely text, distilling Qwen2.5-VL-32B-Instruct into Qwen2.5-VL-3B-Instruct via the same pipeline still improves multimodal reasoning. PAD remains the strongest or near-strongest across benchmarks, suggesting AgentArk captures modality-agnostic reasoning patterns.
+      </p>
+    </div>
+
+    <div class="fig-full reveal">
+      <img src="./media/figures/vlm_math-gsm8k.png" alt="Multimodal distillation results on Math and GSM8K" style="max-width: 86%;">
+      <p class="caption">
+        Multimodal distillation on Math-derived and GSM8K-derived data, evaluated on Qwen2.5-VL-3B-Instruct. Gains are smaller than in text-only settings, as expected, but consistent.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ BIBTEX ============================ -->
+<section class="section bibtex-section" id="bibtex">
+  <div class="container is-max-desktop">
+    <div class="section-head reveal">
+      <div class="section-eyebrow">12 &middot; Cite</div>
+      <h2 class="section-title">BibTeX</h2>
+    </div>
+
+    <div class="bibtex-wrap reveal">
+      <div class="bibtex-bar">
+        <span class="dots">
+          <span class="red"></span><span class="yellow"></span><span class="green"></span>
+        </span>
+        <span class="file-name">agentark.bib</span>
+        <button type="button" class="copy-bib" data-target="#bibtex-code" aria-label="Copy BibTeX to clipboard">
+          <i class="far fa-copy"></i><span class="copy-label">Copy</span>
+        </button>
+      </div>
+<pre id="bibtex-code"><code>@article{luo2026agentark,
+  title={AgentArk: Distilling Multi-Agent Intelligence into a Single LLM Agent},
+  author={Luo, Yinyi and Jin, Yiqiao and Yu, Weichen and Zhang, Mengqi and Kumar, Srijan and Li, Xiaoxiao and Xu, Weijie and Chen, Xin and Wang, Jindong},
+  journal={arXiv preprint arXiv:2602.03955},
+  year={2026}
+}</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FOOTER ============================ -->
+<footer class="site-footer">
+  <p>
+    The data, code, and model artifacts associated with this paper are intended and licensed mainly for research use.
+    This website is licensed under the
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0 International License</a>.
+  </p>
+  <p class="footer-meta">© 2026 AIFrontierLab.</p>
+</footer>
+
+</body>
+</html>
