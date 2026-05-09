@@ -1,12 +1,79 @@
-# AgentArk
+<h1 align="center">🛸 AgentArk</h1>
 
-Code for paper [AgentArk: Distilling Multi-Agent Intelligence into a Single LLM Agent](https://arxiv.org/abs/2602.03955).
+<p align="center"><em>Distilling Multi-Agent Intelligence into a Single LLM Agent.</em></p>
 
-## Table of Contents
+<p align="center">
+  <a href="https://arxiv.org/abs/2602.03955"><img alt="Paper" src="https://img.shields.io/badge/Paper-arXiv-b31b1b?logo=arxiv&logoColor=white"></a>
+  <a href="https://github.com/AIFrontierLab/AgentArk"><img alt="Code" src="https://img.shields.io/badge/Code-GitHub-181717?logo=github&logoColor=white"></a>
+  <img alt="Python" src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white">
+  <img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-2.x-EE4C2C?logo=pytorch&logoColor=white">
+  <img alt="vLLM" src="https://img.shields.io/badge/vLLM-enabled-7C3AED">
+  <img alt="CUDA" src="https://img.shields.io/badge/CUDA-12.5-76B900?logo=nvidia&logoColor=white">
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/License-Apache_2.0-blue.svg"></a>
+</p>
 
-- [Academic Abstract](#academic-abstract)
+<p align="center">
+  <img src="media/figures/teaser.png" alt="AgentArk teaser" width="80%">
+</p>
+
+<p align="center">
+  <a href="https://www.linkedin.com/in/yinyi-luo-5b0805324">Yinyi Luo</a><sup>1</sup> &middot;
+  <a href="https://ahren09.github.io/">Yiqiao Jin</a><sup>2</sup> &middot;
+  <a href="https://weichen-yu.github.io/">Weichen Yu</a><sup>1</sup> &middot;
+  <a href="https://scholar.google.com/citations?user=h7HjebkAAAAJ">Mengqi Zhang</a><sup>3</sup> &middot;
+  <a href="https://faculty.cc.gatech.edu/~srijan/">Srijan Kumar</a><sup>2</sup> &middot;
+  <a href="https://xxlya.github.io/">Xiaoxiao Li</a><sup>5</sup> &middot;
+  <a href="https://www.linkedin.com/in/weijie-xu-936b23101/">Weijie Xu</a><sup>4</sup> &middot;
+  <a href="https://scholar.google.com/citations?user=dnkinp8AAAAJ">Xin Chen</a><sup>4</sup>;
+  <a href="https://jd92.wang/">Jindong Wang</a><sup>3</sup>
+</p>
+
+<p align="center">
+  <sup>1</sup>Carnegie Mellon University &nbsp;
+  <sup>2</sup>Georgia Institute of Technology &nbsp;
+  <sup>3</sup>William &amp; Mary &nbsp;
+  <sup>4</sup>Amazon &nbsp;
+  <sup>5</sup>University of British Columbia
+</p>
+
+---
+
+## At a glance
+
+| Metric | Value |
+| --- | --- |
+| Avg. accuracy lift over single-agent baseline | **+4.8%** |
+| Total experiments across Qwen3 / Gemma 3 / Llama 3 | **120** |
+| Hierarchical distillation strategies | **3** &nbsp;(R-SFT · DA · PAD) |
+| Distillation questions / reasoning trajectories | **~342K / ~2M** |
+
+---
+
+## Abstract
+
+While large language model (LLM) multi-agent systems achieve superior reasoning performance through iterative debate, practical deployment is limited by their high computational cost and error propagation. This paper proposes **AgentArk**, a novel framework to distill multi-agent dynamics into the weights of a *single* model, effectively transforming explicit test-time interactions into implicit model capabilities. This equips a single agent with the intelligence of multi-agent systems while remaining computationally efficient. Specifically, we investigate three hierarchical distillation strategies across various models, tasks, scaling, and scenarios: reasoning-enhanced fine-tuning; trajectory-based augmentation; and process-aware distillation. By shifting the burden of computation from inference to training, the distilled models preserve the efficiency of one agent while exhibiting strong reasoning and self-correction performance of multiple agents. They further demonstrate enhanced robustness and generalization across diverse reasoning tasks. We hope this work can shed light on future research on efficient and robust multi-agent development.
+
+---
+
+## Architecture
+
+<p align="center">
+  <img src="media/figures/pipeline.png" alt="AgentArk pipeline" width="92%">
+</p>
+
+AgentArk distills multi-agent debate into a single model through three hierarchical strategies — **Reasoning-Enhanced SFT (R-SFT)**, **Reasoning Trajectory-based Data Augmentation (DA)**, and **Process-Aware Distillation (PAD)** — moving the cost of collective reasoning from inference time into training time.
+
+---
+
+<details>
+<summary><b>Table of Contents</b></summary>
+
+- [Highlights](#highlights)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
+- [Supported Methods](#supported-methods)
+- [Supported Datasets](#supported-datasets)
+- [Supported Models](#supported-models)
 - [Usage](#usage)
   - [Inference](#inference)
   - [Solution Labeling](#solution-labeling)
@@ -14,18 +81,34 @@ Code for paper [AgentArk: Distilling Multi-Agent Intelligence into a Single LLM 
   - [RL Finetuning with GRPO](#rl-finetuning-with-grpo)
   - [Evaluation](#evaluation)
 - [Configuration](#configuration)
+- [Citation](#citation)
+- [Acknowledgments](#acknowledgments)
+- [License](#license)
 
-## Academic Abstract
+</details>
 
-While large language model (LLM) multi-agent systems achieve superior reasoning performance through iterative debate, practical deployment is limited by their high computational cost and error propagation. In this paper, we propose AgentArk, a framework to distill these collective dynamics into the weights of a single model, effectively transforming explicit test-time interactions into implicit model capabilities. This equips a single agent with the intelligence of multi-agent systems while remaining computationally efficient. Specifically, we investigate three hierarchical distillation strategies across various models, tasks, scaling, and scenarios: reasoning-enhanced fine-tuning; trajectory-based augmentation; and process-aware distillation. By shifting the burden of computation from inference to training, the distilled models preserve the efficiency of one agent while exhibiting strong reasoning and self-correction performance of multiple agents. They further demonstrate enhanced robustness and generalizability across diverse reasoning tasks. We hope this work can shed light on future research on efficient and robust multi-agent development.
+---
+
+## Highlights
+
+- **Single-agent efficiency, multi-agent reasoning.** A distilled student matches most of the gain of a full debate ensemble at a fraction of the inference cost.
+- **PRM capacity matters more than student size.** A stronger process reward model lifts smaller students disproportionately; student capacity bounds the multi-agent gain.
+- **Reasoning quality outweighs quantity.** Curated, higher-fidelity trajectories beat naive scale-up of distillation data.
+- **Process-aware distillation improves reasoning behavior, not just accuracy.** Students internalize critique-and-revise dynamics rather than memorizing answers.
+- **Robust and general.** Gains transfer to out-of-distribution and robustness benchmarks (e.g., TruthfulQA).
+- **Extends across modalities and model families.** Validated on Qwen3, Gemma 3, Llama 3, and Qwen2.5-VL (multimodal).
+
+---
 
 ## Installation
 
 ### Requirements
 
-- Python 3.10+
-- CUDA 12.5
-- 40GB+ GPU memory recommended for inference
+| | |
+| --- | --- |
+| Python | 3.10+ |
+| CUDA | 12.5 |
+| GPU memory | 40 GB+ recommended for inference |
 
 ### Setup
 
@@ -52,6 +135,8 @@ pip install -r requirements.txt
 | Evaluation | `rouge_score`, `bert_score`, `sympy` |
 | Utilities | `datasets`, `accelerate`, `peft`, `wandb` |
 
+---
+
 ## Quick Start
 
 ```bash
@@ -69,7 +154,56 @@ python -m eval.short_answer_eval \
     --dataset_name QMSum
 ```
 
+---
 
+## Supported Methods
+
+Each method lives under [`methods/`](methods/) with its own YAML config in `methods/<name>/configs/`.
+
+| Method | Directory | Description |
+| --- | --- | --- |
+| AgentVerse | [`methods/agentverse`](methods/agentverse) | Collaborative role-play with critic feedback rounds |
+| AutoGen | [`methods/autogen`](methods/autogen) | Conversable multi-agent framework |
+| CAMEL | [`methods/camel`](methods/camel) | Role-playing communicative agents |
+| ChatDev | [`methods/chatdev`](methods/chatdev) | Software-development-oriented multi-agent pipeline |
+| CoT | [`methods/cot`](methods/cot) | Single-agent chain-of-thought baseline |
+| DyLAN | [`methods/dylan`](methods/dylan) | Dynamic agent network with listwise ranking |
+| EvoMAC | [`methods/evomac`](methods/evomac) | Evolutionary multi-agent collaboration |
+| LLM Debate | [`methods/llm_debate`](methods/llm_debate) | Iterative debate among peer agents |
+| MacNet | [`methods/macnet`](methods/macnet) | Macro-network of communicating agents |
+| MAD | [`methods/mad`](methods/mad) | Multi-Agent Debate |
+| MapCoder | [`methods/mapcoder`](methods/mapcoder) | Code-generation pipeline with planner/coder roles |
+| MAS Base | [`methods/mas_base`](methods/mas_base) | Shared base utilities for multi-agent systems |
+| MAV | [`methods/mav`](methods/mav) | Multi-Agent Verifier |
+| Self-Consistency | [`methods/self_consistency`](methods/self_consistency) | Parallel sampling with majority vote |
+
+---
+
+## Supported Datasets
+
+| Dataset | Task type |
+| --- | --- |
+| MATH | Mathematical reasoning |
+| GSM8K | Grade-school math |
+| MetaMathQA | Augmented math |
+| MedMCQA | Medical multiple choice |
+| QASPER | Long-context scientific QA |
+| HotpotQA | Multi-hop QA |
+| QMSum | Query-based meeting summarization |
+| TruthfulQA | Robustness / truthfulness |
+
+---
+
+## Supported Models
+
+| Family | Models | Typical role |
+| --- | --- | --- |
+| Qwen 3 | Qwen3-32B, Qwen3-8B, Qwen3-1.7B, Qwen3-0.6B | Teacher (32B) / Students |
+| Gemma 3 | Gemma3-27B-it, Gemma3-7B | Teacher / Student |
+| Llama 3 | Llama3-8B-Instruct | Student |
+| Qwen2.5-VL (multimodal) | Qwen2.5-VL-32B-Instruct, Qwen2.5-VL-3B | Teacher / Student |
+
+---
 
 ## Usage
 
@@ -99,7 +233,8 @@ python inference.py \
 | `--tensor_parallel_size` | Number of GPUs for tensor parallelism | 1 |
 | `--use_modal_batch` | Use Modal for cloud deployment | False |
 
-**Example - Running DyLAN on MATH:**
+<details>
+<summary><b>Example — Running DyLAN on MATH</b></summary>
 
 ```bash
 python inference.py \
@@ -111,7 +246,10 @@ python inference.py \
     --model_temperature 0.7
 ```
 
-**Example - Running with Modal Cloud:**
+</details>
+
+<details>
+<summary><b>Example — Running with Modal Cloud</b></summary>
 
 ```bash
 # First deploy the Modal model
@@ -124,6 +262,8 @@ python inference.py \
     --use_modal_batch \
     --model_name Qwen/Qwen3-8B
 ```
+
+</details>
 
 ### Solution Labeling
 
@@ -138,6 +278,7 @@ python label.py \
 ```
 
 This produces labeled data with the format:
+
 ```json
 {
     "query": "...",
@@ -153,6 +294,9 @@ This produces labeled data with the format:
 ### Process Reward Model Training
 
 Train a PRM to score intermediate reasoning steps:
+
+<details>
+<summary><b>Show training command</b></summary>
 
 ```bash
 PYTHONPATH=$PYTHONPATH:$(pwd) python prm/finetune2.py \
@@ -177,9 +321,14 @@ PYTHONPATH=$PYTHONPATH:$(pwd) python prm/finetune2.py \
     --enable_nan_monitoring True
 ```
 
+</details>
+
 ### RL Finetuning with GRPO
 
 Finetune the policy model using Group Relative Policy Optimization:
+
+<details>
+<summary><b>Show training command</b></summary>
 
 ```bash
 python -m openrlhf.cli.train_grpo \
@@ -209,6 +358,8 @@ python -m openrlhf.cli.train_grpo \
     --save_steps 20 \
     --logging_steps 1
 ```
+
+</details>
 
 **GRPO Key Arguments:**
 
@@ -265,6 +416,8 @@ python -m eval.math_eval \
     --dataset_name MATH
 ```
 
+---
+
 ## Configuration
 
 Each method has YAML configuration files in `methods/<method_name>/configs/`.
@@ -307,3 +460,30 @@ parallel_num: 5  # Number of parallel solution paths
 num_agents: 3           # Number of debating agents
 num_rounds: 2           # Debate rounds
 ```
+
+---
+
+## Citation
+
+If you find AgentArk useful for your research, please cite:
+
+```bibtex
+@article{luo2026agentark,
+  title={AgentArk: Distilling Multi-Agent Intelligence into a Single LLM Agent},
+  author={Luo, Yinyi and Jin, Yiqiao and Yu, Weichen and Zhang, Mengqi and Kumar, Srijan and Li, Xiaoxiao and Xu, Weijie and Chen, Xin and Wang, Jindong},
+  journal={arXiv preprint arXiv:2602.03955},
+  year={2026}
+}
+```
+
+---
+
+## Acknowledgments
+
+AgentArk is built on top of excellent open-source work, including [OpenRLHF](https://github.com/OpenRLHF/OpenRLHF), [vLLM](https://github.com/vllm-project/vllm), [TRL](https://github.com/huggingface/trl), and HuggingFace [Transformers](https://github.com/huggingface/transformers).
+
+---
+
+## License
+
+This project is released under the [Apache License 2.0](LICENSE).
